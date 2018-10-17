@@ -1,0 +1,186 @@
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>
+@prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#>.
+@prefix lime: <http://www.w3.org/ns/lemon/lime#>.
+@prefix zh:<http://rdf.naturallexicon.org/zh/>.
+@prefix en:<http://rdf.naturallexicon.org/en/>.
+@prefix natlex: <http://rdf.naturallexicon.org/>.
+@base <http://rdf.naturallexicon.org/zh/cedict-schema.ttl>.
+
+<> dct:description """
+
+    This ontology pertains to representations of Chinese Lexical
+    information, particularly to RDF translations of CEDICT, available
+    from
+    <https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>,
+    Discussed at <https://www.mdbg.net/chinese/dictionary?page=cedict>
+      
+    Licenced under <https://creativecommons.org/licenses/by-sa/3.0/>.
+
+    Per the conditions of said license, this RDF representation is
+    licensed under the same terms.
+
+    Chinese has a couple of peculiarities. Its written form extends
+    over a number of dialects with radically different
+    pronunciations. There is no morphology to speak of, so each
+    lexical entry is its own canonical form.
+
+    CEDICT's English representations are descriptions, some subset of
+    these descriptions may be aligned to English lexica, but this file
+    renders these descriptions as 'glosses'.
+     
+    The following new constructs are defined:
+    * zh:Cedict, naming the lexicon
+    * zh:ChineseTextualForm, subsumed by both ontlex:LexicalEntry and 
+      ontolex:Form
+    * zh:CedictEntry, a zh:ChineseTextualForm entry in zh:Cedict.
+    * natlex:inLexicon owl:inverseOf lime:entry, to facilitate definintion of 
+      zh:CedictEntry
+    * zh:pinyin, a sub-property of ontolex:phoneticRep 
+    * en:gloss, an English description of each lexical sense.
+    * zh:Cedict
+    
+    These Ontolex constructs are used directly:
+    * ontolex:writtenRep
+    * ontolex:sense
+    * ontolex:LexicalSense, each instance of which is given an en:gloss
+      assertion (see description below) Each lexical sense is named
+      with a numeric #-fragment appended to its corresponding
+      ChineseTextualForm.
+
+    CEDICT provides written forms in both simplified and traditional
+    forms.  The simplified form, being the offical form for the
+    People's Republic of China, are tagged as @zh. When the
+    traditional form for an entry differs from the simplied form, a
+    second writtenRep assertion is made, tagged as @zh-Hant.
+    
+
+    """;
+        .
+
+
+# CHINESE TEXTUAL FORMS
+
+    zh:ChineseTextualForm
+    rdfs:subClassOf ontolex:LexicalEntry, ontolex:Form;
+    dct:description """
+        Since there is no morphology to speak of in Chinese, it seems
+        parsimonious to use a class which is both a form and a lexical
+        entry, whose canonical form is itself.
+        """;
+    rdfs:subClassOf [
+        a owl:Restricton;
+        owl:onProperty dct:language; 
+        owl:hasValue <http://www.lexvo.org/page/iso639-1/zh>;
+    ];
+    
+    rdfs:subClassOf [
+        a owl:Restriction;
+        owl:onProperty ontolex:canonicalForm;
+        owl:hasSelf "true"^^xsd:boolean;
+    ];
+    
+    .
+
+
+    zh:Cedict a lime:Lexicon;
+    dct:definition """
+    Refers to the Chinese lexicon rendered in RDF from CEDICT.
+    """;
+    lime:language <http://www.lexvo.org/page/iso639-1/zh>;
+    dct:source <https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>;
+    .
+
+    natlex:inLexicon owl:inverseOf lime:entry;
+    dct:description """
+    Inverse of lime:entry to facilitate definition of zh:CedictEntry.
+    """;
+    .
+    
+    zh:CedictEntry rdfs:subClassOf zh:ChineseTextualForm;
+    dct:definition """
+    Refers to lexical entries in the Cedict lexicon.
+    """;
+    rdfs:subClassOf [a owl:Restriction;
+                     owl:onProperty natlex:inLexicon;
+                     owl:hasValue zh:Cedict;
+                     ];
+    .
+
+# SHACL for writtenRep
+    zh:writtenRepShape a sh:NodeShape;
+    dct:description """ 
+    Written rep of Chinese Textual Forms should be tagged as Chinese.
+ """;
+    sh:targetClass zh:ChineseTextualForm;
+    sh:property [
+        sh:path ontolex:writtenRep;
+        sh:languageIn ("zh" "zh-Hant" "zh-Hans");
+        ];
+    .
+
+
+# PINYIN
+    zh:pinyin rdfs:subPropertyOf ontolex:phoneticRep;
+    dct:description """
+
+        <chinese expr> zh:pinyin "<pron>"@zh-Latn-pinyin.
+
+    Asserts that <chinese expr> is prounounced in Mandarin per <pron>,
+    interpreted as <https://en.wikipedia.org/wiki/Pinyin>.
+    
+    Note that other dialects would require their own pronounciation
+    specification for the same written expression.
+
+    Tones may be indicated with diacritics on the vowels, or by
+    numbers 1-4, which have well-known mappings to the four mandarin
+    tones. An unmarked neutral tone is also possible.
+    
+    """;
+        owl:sameAs <http://www.wikidata.org/prop/P1721>;
+        .
+
+# SHACL for zh:pinyin
+    zh:pinyinShape a sh:NodeShape;
+    dct:description """ zh:pinyin should range to zh-Latn-pinyin only.  """;
+    sh:targetClass zh:ChineseTextualForm;
+    sh:property [
+        sh:path zh:pinyin;
+        sh:languageIn ("zh-Latn-pinyin");
+        ];
+    .
+
+
+# ENGLISH GLOSS
+    en:gloss rdfs:subPropertyOf skos:definition;
+    dct:description """
+        <expression> en:gloss "<gloss>"@en.
+
+    Asserts that <expression> has been described in English as
+    <gloss>, and MAY serve as a basis for asserting an actual
+    translation.
+    
+    """; .
+
+# SHACL for en:gloss
+    en:glossShape a sh:NodeShape;
+    dct:description """ enGloss should range to English only.  """;
+    sh:targetClass zh:ChineseTextualForm;
+    sh:property [
+        sh:path en:gloss;
+        sh:languageIn ("en");
+        ];
+    .
+
+
+
+
+
+ 
+    
