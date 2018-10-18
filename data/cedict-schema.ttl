@@ -8,9 +8,12 @@
 @prefix sh: <http://www.w3.org/ns/shacl#>
 @prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#>.
 @prefix lime: <http://www.w3.org/ns/lemon/lime#>.
-@prefix zh:<http://rdf.naturallexicon.org/zh/>.
-@prefix en:<http://rdf.naturallexicon.org/en/>.
-@prefix natlex: <http://rdf.naturallexicon.org/>.
+@prefix hanzi: <http://rdf.naturallexicon.org/zh/written/>.
+@prefix cedict: <http://rdf.naturallexicon.org/zh/cedict/>.
+@prefix cmn: <http://rdf.naturallexicon.org/zh/cmn/>.
+@prefix zh:<http://rdf.naturallexicon.org/zh/ont#>.
+@prefix en:<http://rdf.naturallexicon.org/en/ont#>.
+@prefix natlex: <http://rdf.naturallexicon.org/ont#>.
 @base <http://rdf.naturallexicon.org/zh/cedict-schema.ttl>.
 
 <> dct:description """
@@ -37,14 +40,18 @@
      
     The following new constructs are defined:
     * zh:Cedict, naming the lexicon
-    * zh:ChineseTextualForm, subsumed by both ontlex:LexicalEntry and 
+    * zh:ChineseWrittenForm, subsumed by both ontlex:LexicalEntry and 
       ontolex:Form
-    * zh:CedictEntry, a zh:ChineseTextualForm entry in zh:Cedict.
+    * zh:CedictEntry, a zh:ChineseWrittenForm entry in zh:Cedict.
     * natlex:inLexicon owl:inverseOf lime:entry, to facilitate definintion of 
       zh:CedictEntry
+    * A new subclass of zh:ChineseWrittenForm is defined for every written 
+      form, restricted in its ontolex:writtenRep.
+    * zh:MandarinForm a subclass of said new subclass, with ontolex:pron
+      defined with a zh:pinyin specification.
     * zh:pinyin, a sub-property of ontolex:phoneticRep 
     * en:gloss, an English description of each lexical sense.
-    * zh:Cedict
+
     
     These Ontolex constructs are used directly:
     * ontolex:writtenRep
@@ -52,7 +59,7 @@
     * ontolex:LexicalSense, each instance of which is given an en:gloss
       assertion (see description below) Each lexical sense is named
       with a numeric #-fragment appended to its corresponding
-      ChineseTextualForm.
+      ChineseWrittenForm.
 
     CEDICT provides written forms in both simplified and traditional
     forms.  The simplified form, being the offical form for the
@@ -61,19 +68,43 @@
     second writtenRep assertion is made, tagged as @zh-Hant.
     
 
+    Namespaces
+
+    The following namespaces are introduced (with suggested prefixes):
+
+@prefix hanzi: <http://rdf.naturallexicon.org/zh/written/>.
+
+    A container for chinese written forms.
+    
+@prefix cedict: <http://rdf.naturallexicon.org/zh/cedict/>.
+
+    A container of instances of lexical entries and senses associated
+    with CEDICT.
+
+@prefix cmn: <http://rdf.naturallexicon.org/zh/cmn/>.
+
+    A container for Mandarin forms.
+    
+@prefix zh:<http://rdf.naturallexicon.org/zh/ont#>.
+
+    The home of ontological constructs relating to Chinese.
+    
+@prefix en:<http://rdf.naturallexicon.org/en/ont#>.
+
+    The home of ontological constructs relating to English.
+    
+@prefix natlex: <http://rdf.naturallexicon.org/ont#>.
+    
+    The home of ontological constructs that apply to no particular language.
+    
     """;
         .
 
 
-# CHINESE TEXTUAL FORMS
+# CHINESE WRITTEN FORMS
 
-    zh:ChineseTextualForm
-    rdfs:subClassOf ontolex:LexicalEntry, ontolex:Form;
-    dct:description """
-        Since there is no morphology to speak of in Chinese, it seems
-        parsimonious to use a class which is both a form and a lexical
-        entry, whose canonical form is itself.
-        """;
+    zh:ChineseWrittenForm
+    rdfs:subClassOf ontolex:Form;
     rdfs:subClassOf [
         a owl:Restricton;
         owl:onProperty dct:language; 
@@ -85,25 +116,56 @@
         owl:onProperty ontolex:canonicalForm;
         owl:hasSelf "true"^^xsd:boolean;
     ];
-    
+
+   dct:description """ 
+
+    Refers to forms written in Chinese. Fully specified forms should
+    be grounded in a specific Chinese dialect.
+
+       For each lexical entry, a subclass of ChineseWritenForm should
+        be declared, with an owl restriction on its lex:writtenRep.
+        Forms in specific dialects or varyations in pronunciation
+        within the same dialect should then be instances of this
+        class, specifying pronunciation with a sub-property of
+        ontolex:phoneticRep.
+        
+        For example, 王 (king) can take two pronunciations (2nd or 4th
+        tone).
+
+    hanzi:王
+      rdfs:subClassOf zh:ChineseWrittenForm;
+      rdfs:subClassOf [a owl:restriction;
+                       owl:onProperty ontolex:writtenRep;
+                       owl:hasValue "王"@zh].
+  
+    cmn:王-wáng zh:mandarinFormOf hanzi:王;
+      zh:pinyin "wáng"@zh-Latn-pinyin.
+
+    cmn:王-wàng zh:mandarinFormOf hanzi:王;
+      zh:pinyin "wàng"@zh-Latn-pinyin.
+
+        """;
+ 
     .
 
-
+# Cedict instance
     zh:Cedict a lime:Lexicon;
     dct:definition """
-    Refers to the Chinese lexicon rendered in RDF from CEDICT.
+    Refers to the Chinese lexicon rendered in from CEDICT rendered in RDF.
     """;
     lime:language <http://www.lexvo.org/page/iso639-1/zh>;
     dct:source <https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>;
     .
 
+#  in lexicon property
     natlex:inLexicon owl:inverseOf lime:entry;
     dct:description """
     Inverse of lime:entry to facilitate definition of zh:CedictEntry.
     """;
     .
-    
-    zh:CedictEntry rdfs:subClassOf zh:ChineseTextualForm;
+
+# CEDICT entry class
+    zh:CedictEntry rdfs:subClassOf zh:ChineseWrittenForm;
     dct:definition """
     Refers to lexical entries in the Cedict lexicon.
     """;
@@ -113,26 +175,49 @@
                      ];
     .
 
-# SHACL for writtenRep
+# SHACL for writtenRep in Chinese written forms
     zh:writtenRepShape a sh:NodeShape;
     dct:description """ 
-    Written rep of Chinese Textual Forms should be tagged as Chinese.
+    Written rep of Chinese Written Forms should be tagged as Chinese.
  """;
-    sh:targetClass zh:ChineseTextualForm;
+    sh:targetClass zh:ChineseWrittenForm;
     sh:property [
         sh:path ontolex:writtenRep;
         sh:languageIn ("zh" "zh-Hant" "zh-Hans");
         ];
     .
 
+# Mandarin form class
+    zh:MandarinForm rdfs:subClassOf zh:ChineseWrittenForm;
+    dct:description """
+        Refers to a part of the Mandarin vocabulary.
+        """;
+    .
 
-# PINYIN
+# Mandarin form of property
+    zh:mandarinFormOf rdfs:subPropertyOf rdf:type;
+    rdfs:domain zh:MandarinForm;
+    rdfs:range zh:ChineseWrittenForm;
+    rdfs:comment """
+        <hanzi> rdfs:subClassOf zh:ChineseWrittenForm;
+                rdfs:subClassOf [a owl:restriction;
+                                 owl:onProperty ontolex:writtenRep;
+                                 owl:hasValue "<hanzi-rep>"@<language>].
+       <mandarin form> zh:mandarinFormOf <hanzi>.
+
+        Asserts that <mandarin form> is an instance of lexical form <hanzi>,
+        written as <hanzi-rep>@<language>.
+        """;
+    .
+    
+# pinyin property
     zh:pinyin rdfs:subPropertyOf ontolex:phoneticRep;
+    rdfs:domain zh:MandarinForm;
     dct:description """
 
-        <chinese expr> zh:pinyin "<pron>"@zh-Latn-pinyin.
+        <mandarin expr> zh:pinyin "<pron>"@zh-Latn-pinyin.
 
-    Asserts that <chinese expr> is prounounced in Mandarin per <pron>,
+    Asserts that <mandarin expr> is prounounced in Mandarin per <pron>,
     interpreted as <https://en.wikipedia.org/wiki/Pinyin>.
     
     Note that other dialects would require their own pronounciation
@@ -149,7 +234,7 @@
 # SHACL for zh:pinyin
     zh:pinyinShape a sh:NodeShape;
     dct:description """ zh:pinyin should range to zh-Latn-pinyin only.  """;
-    sh:targetClass zh:ChineseTextualForm;
+    sh:targetClass zh:ChineseWrittenForm;
     sh:property [
         sh:path zh:pinyin;
         sh:languageIn ("zh-Latn-pinyin");
@@ -157,7 +242,7 @@
     .
 
 
-# ENGLISH GLOSS
+# English gloss property
     en:gloss rdfs:subPropertyOf skos:definition;
     dct:description """
         <expression> en:gloss "<gloss>"@en.
@@ -171,7 +256,7 @@
 # SHACL for en:gloss
     en:glossShape a sh:NodeShape;
     dct:description """ enGloss should range to English only.  """;
-    sh:targetClass zh:ChineseTextualForm;
+    sh:targetClass zh:ChineseWrittenForm;
     sh:property [
         sh:path en:gloss;
         sh:languageIn ("en");

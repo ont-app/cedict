@@ -55,7 +55,7 @@
 
   
 (def header
-  "Namespaces and such repended to the output.
+  "Namespaces and such prepended to the output.
   "
   (selmer/render
    "{{prefixes|safe}}
@@ -88,17 +88,32 @@
   (shortest-valid-uri (str (prefixes "cmn")
                            ci "-" (str/replace pinyin #" " "-"))))
 
-(defn cedict-uri [ci pinyin]
-  "Returns uri for `ci` in cmn (mandarin) namespace.
-"
-  (shortest-valid-uri (str (prefixes "cedict")
-                           ci "-" (str/replace pinyin #" " "-"))))
+(defn cedict-long-uri [history ci pinyin]
+  "Returns the uri common to both cedict entry and its senses, without 
+abbreviation. This allows us to check the history and know whether to add 
+an extra variation index when necessary."
+  (let [base-uri 
+        (str (prefixes "cedict")
+             ci "-" (str/replace pinyin #" " "-"))
+        ]
+    
+    (if (contains? history base-uri)
+      (str (prefixes "cedict")
+           ci "-" (str/replace pinyin #" " "-")
+           "-" (inc (get history base-uri)))
+      base-uri)))
+  
 
-(defn sense-uri [ci pinyin ordinal]
+(defn cedict-uri 
   "Returns uri for `ci` in cmn (mandarin) namespace.
 "
-  (shortest-valid-uri (str (prefixes "cedict")
-                           ci "-" (str/replace pinyin #" " "-")
+  [history ci pinyin]
+  (shortest-valid-uri (cedict-long-uri history ci pinyin)))
+
+(defn sense-uri [history ci pinyin ordinal]
+  "Returns uri for `ci` in cmn (mandarin) namespace.
+"
+  (shortest-valid-uri (str (cedict-long-uri history ci pinyin)
                            "#" ordinal)))
 
 (def pinyin-diacritics
@@ -169,7 +184,8 @@
   ")
 
 (def mandarin-template "
-{{cmn-uri|safe}} zh:mandarinFormOf {{hanzi-uri-clause|safe}};
+{{cmn-uri|safe}} a zh:MandarinForm;
+    zh:mandarinFormOf {{hanzi-uri-clause|safe}};
     zh:pinyin \"{{pinyin}}\"@zh-Latn-pinyin.
 ")
 
@@ -186,9 +202,17 @@
 ")
 
 
-(defn cedict-ttl [traditional simple pron desc]
+(defn- update-tally [acc key]
+  (update-in acc [key] (fn [v] (if v (inc v) 1))))
+
+(defn cedict-ttl [history traditional simple pron desc]
   "
-Returns a Turtle rendering of the contents of a CEDICT record.
+Returns [`history`* <record>]
+Where
+<history> := {<uri> <tally>, ...}
+<uri> is a uri already minted for some output in this or previous <record>s
+<tallY> is the number of incomning lines that invoked creation of <uri>
+<record> is a string of turtle rendering of the contents of a CEDICT record.
 TODO: Consider providing also some clojure-based representation
 such as Grafter or EDN-LD, and also JSON-LD.
 "
@@ -203,7 +227,7 @@ such as Grafter or EDN-LD, and also JSON-LD.
         sense-reps (map (fn [i gloss] [i gloss])
                         (range (count senses))
                         senses)
-        sense-uri-for (fn [i] (sense-uri simple pinyin (+ i 1)))
+        sense-uri-for (fn [i] (sense-uri history simple pinyin (+ i 1)))
         sense-links (str "ontolex:sense "
                          (str/join ", "
                                    (map sense-uri-for
@@ -226,25 +250,35 @@ such as Grafter or EDN-LD, and also JSON-LD.
                       :language-tag "zh"
                       :cmn-uri (cmn-uri simple pinyin)
                       :pinyin pinyin
-                      :cedict-uri (cedict-uri simple pinyin)
+                      :cedict-uri (cedict-uri history simple pinyin)
                       :senseLinks sense-links
                       :senseDeclarations sense-declarations
                       
-                     }
+                      }
+
         ]
 
-    (str
-     (selmer/render hanzi-template template-map)
-     (if (not= simple traditional)
-       (selmer/render hanzi-template (merge template-map
-                                            {:hanzi-uri (hanzi-uri traditional)
-                                             :hanzi traditional
-                                             :language-tag "zh-Hant"
-                                             }))
-       "")
-     (selmer/render mandarin-template template-map)
-     (selmer/render cedict-entry-template template-map)
-     )))
+    [(reduce update-tally history (concat hanzi-uris
+                                          [(:cmn-uri template-map)
+                                           ;; tally 'zero history' version...
+                                           (cedict-long-uri {} simple pinyin)])),
+     (str
+      (if (not (contains? history (hanzi-uri simple)))
+        (selmer/render hanzi-template template-map)
+        "")
+      (if (and (not= simple traditional)
+               (not (contains? history (hanzi-uri traditional))))
+        (selmer/render hanzi-template (merge template-map
+                                             {:hanzi-uri (hanzi-uri traditional)
+                                              :hanzi traditional
+                                              :language-tag "zh-Hant"
+                                              }))
+        "")
+      (if (not (contains? history (:cmn-uri template-map)))
+        (selmer/render mandarin-template template-map)
+        "")
+      (selmer/render cedict-entry-template template-map)
+      )]))
 
 (defn translate-cedict-source [instream outstream]
   "
@@ -255,19 +289,22 @@ Where
 "
   (let [comment-re #"^\s*#.*"
         entry-re #"^(\S+) (\S+) \[([^\]]+)\] (.*)"
-        translate-line (fn [line]
-                    (if (re-matches comment-re line)
-                      ""
-                      (if-let [entry (re-matches entry-re line)]
-                        (let [[_ traditional simple pron desc] entry]
-                          (cedict-ttl
-                           traditional simple pron desc)))))
+        translate-line (fn [history line]
+                         (if (re-matches comment-re line)
+                           [history ""]
+                           (if-let [entry (re-matches entry-re line)]
+                             (let [[_ traditional simple pron desc] entry]
+                               (cedict-ttl
+                                history traditional simple pron desc)))))
                         
-
+        history (atom {})
         ]
     
     (doseq [line (line-seq instream)]
-      (.write outstream (translate-line line)))))
+      (let [[_history record] (translate-line @history line)
+            ]
+        (reset! history _history)
+        (.write outstream record)))))
 
 (def default-source-url
   "This is the last known url for the CEDICT source. Don't expect it to
