@@ -2,7 +2,6 @@
   (:require
    [clojure.string :as str]
    [clojure.java.io :as io]
-   [clojure.tools.logging :as log]
    [selmer.parser :as selmer]
    )
   (:import java.util.zip.GZIPInputStream
@@ -59,7 +58,11 @@
   "
   (selmer/render
    "{{prefixes|safe}}
-  @base <http://rdf.naturallexicon.org/zh/cedict.ttl>.
+  
+   <> a owl:Ontology ;
+    owl:imports <cedict-schema.ttl>;
+    .
+
   <> rdfs:comment \"\"\"
   The contents of this file are derived from CEDICT, available from
   available from
@@ -177,15 +180,16 @@ an extra variation index when necessary."
 ;; Templates for generating Turtle...
 (def hanzi-template "
 {{hanzi-uri|safe}}
-    rdfs:subClassOf zh:ChineseWrittenForm;
-    rdfs:subClassOf [a owl:restriction;
+    rdfs:subClassOf zh:ChineseForm;
+    rdfs:subClassOf [a owl:Restriction;
                      owl:onProperty ontolex:writtenRep;
-                     owl:hasValue \"{{hanzi|safe}}\"@{{language-tag}}].
+                     owl:hasValue \"{{hanzi}}\"@{{language-tag}}];
+    zh:label \"{{hanzi}}\"@{{language-tag}}.
   ")
 
 (def mandarin-template "
 {{cmn-uri|safe}} a zh:MandarinForm;
-    zh:mandarinFormOf {{hanzi-uri-clause|safe}};
+    zh:writtenForm {{hanzi-uri-clause|safe}};
     zh:pinyin \"{{pinyin}}\"@zh-Latn-pinyin.
 ")
 
@@ -344,7 +348,7 @@ Where
         (.write outstream header)
         (translate-cedict-source instream outstream)
         (assert (io/as-file output-path))
-        (log/info (str "output to " output-path " successful")))
+        (.println *err* (str "output to " output-path " successful")))
       
       (catch java.io.FileNotFoundException e
         (throw (Exception.

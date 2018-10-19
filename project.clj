@@ -8,7 +8,6 @@
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/spec.alpha "0.2.176"]
                  [org.clojure/tools.cli "0.4.0"]
-                 [org.clojure/tools.logging "0.4.1"]
                  [selmer "1.12.1"]
                  ]
   :main ^:skip-aot cedict.core

@@ -1,0 +1,73 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#>.
+@prefix en: <http://rdf.naturallexicon.org/en/ont#>.
+@prefix cedict: <http://rdf.naturallexicon.org/zh/cedict/>.
+@prefix zh: <http://rdf.naturallexicon.org/zh/ont#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix hanzi: <http://rdf.naturallexicon.org/zh/written/>.
+@prefix natlex: <http://rdf.naturallexicon.org/ont#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix cmn: <http://rdf.naturallexicon.org/zh/cmn/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+<> a owl:Ontology ;
+    owl:imports <cedict-schema.ttl>;
+    rdfs:comment """
+    A small set of data for testing and to serve as an example.
+    """;
+    .
+
+
+hanzi:王
+    rdfs:subClassOf zh:ChineseForm;
+    rdfs:subClassOf [a owl:Restriction;
+                     owl:onProperty ontolex:writtenRep;
+                     owl:hasValue "王"@zh];
+    zh:label "王"@zh.
+  
+cmn:王-wáng a zh:MandarinForm;
+    zh:writtenForm hanzi:王;
+    zh:pinyin "wáng"@zh-Latn-pinyin.
+
+cedict:王-wáng a zh:CedictEntry;
+    ontolex:lexicalForm cmn:王-wáng;
+    ontolex:sense <http://rdf.naturallexicon.org/zh/cedict/王-wáng#1>;.
+
+<http://rdf.naturallexicon.org/zh/cedict/王-wáng#1> a ontolex:LexicalSense;
+  en:gloss """surname Wang"""@en;
+.
+
+cedict:王-wáng-2 a zh:CedictEntry;
+    ontolex:lexicalForm cmn:王-wáng;
+    ontolex:sense <http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#1>, <http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#2>, <http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#3>, <http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#4>;.
+
+<http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#1> a ontolex:LexicalSense;
+  en:gloss """king or monarch"""@en;
+.
+<http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#2> a ontolex:LexicalSense;
+  en:gloss """best or strongest of its type"""@en;
+.
+<http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#3> a ontolex:LexicalSense;
+  en:gloss """grand"""@en;
+.
+<http://rdf.naturallexicon.org/zh/cedict/王-wáng-2#4> a ontolex:LexicalSense;
+  en:gloss """great"""@en;
+.
+
+cmn:王-wàng a zh:MandarinForm;
+    zh:writtenForm hanzi:王;
+    zh:pinyin "wàng"@zh-Latn-pinyin.
+
+cedict:王-wàng a zh:CedictEntry;
+    ontolex:lexicalForm cmn:王-wàng;
+    ontolex:sense <http://rdf.naturallexicon.org/zh/cedict/王-wàng#1>, <http://rdf.naturallexicon.org/zh/cedict/王-wàng#2>;.
+
+<http://rdf.naturallexicon.org/zh/cedict/王-wàng#1> a ontolex:LexicalSense;
+  en:gloss """to rule"""@en;
+.
+<http://rdf.naturallexicon.org/zh/cedict/王-wàng#2> a ontolex:LexicalSense;
+  en:gloss """to reign over"""@en;
+.
