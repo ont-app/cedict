@@ -12,7 +12,7 @@
 @prefix zh:<http://rdf.naturallexicon.org/zh/ont#>.
 @prefix en:<http://rdf.naturallexicon.org/en/ont#>.
 @prefix natlex: <http://rdf.naturallexicon.org/ont#>.
-@base <http://rdf.naturallexicon.org/zh/ont#cedict-meta.ttl>.
+@base <http://rdf.naturallexicon.org/zh/ont/cedict-meta.ttl>.
 
 
 zh:Cedict a lime:Lexicon;
