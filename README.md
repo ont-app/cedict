@@ -9,6 +9,9 @@ and is discussed at [the MDBG website](https://www.mdbg.net/chinese/dictionary?p
 The supporting schema can be found in [`data/cedict-schema.ttl`](https://github.com/ont-app/cedict/blob/master/data/cedict-schema.ttl). It
 aligns to [the Ontolex ontology](https://www.w3.org/2016/05/ontolex/).
 
+The translated turtle file can be downloaded directly from
+[data/cedict_1_0_ts_utf-8_mdbg.ttl.gz](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
+
 The DCAT specification is at [data/cedict-meta.ttl](https://github.com/ont-app/cedict/blob/master/data/cedict-meta.ttl).
 
 Chinese has a couple of peculiarities. Its written form extends over a
@@ -22,10 +25,10 @@ English forms. This file renders these descriptions as 'glosses'.
 
 ## Installation
 
-The translated turtle file can be downloaded directly from
+Normally there's nothing to build. The turtle file can be downloaded directly from
 [data/cedict_1_0_ts_utf-8_mdbg.ttl.gz](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
 
-To regenerate the file:
+On the off chance you want to regenerate the file:
 
 * Clone this repo
 * [Install leiningen](https://leiningen.org/#install)
