@@ -9,10 +9,10 @@
 @prefix sh: <http://www.w3.org/ns/shacl#>
 @prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#>.
 @prefix lime: <http://www.w3.org/ns/lemon/lime#>.
-@prefix zh:<http://rdf.naturallexicon.org/zh/>.
-@prefix en:<http://rdf.naturallexicon.org/en/>.
-@prefix natlex: <http://rdf.naturallexicon.org/>.
-@base <http://rdf.naturallexicon.org/zh/cedict-meta.ttl>.
+@prefix zh:<http://rdf.naturallexicon.org/zh/ont#>.
+@prefix en:<http://rdf.naturallexicon.org/en/ont#>.
+@prefix natlex: <http://rdf.naturallexicon.org/ont#>.
+@base <http://rdf.naturallexicon.org/zh/ont#cedict-meta.ttl>.
 
 
 zh:Cedict a lime:Lexicon;
