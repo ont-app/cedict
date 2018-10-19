@@ -38,8 +38,9 @@
 
     Chinese has a couple of peculiarities. Its written form extends
     over a number of dialects with radically different
-    pronunciations. There is no morphology to speak of, so each
-    lexical entry is its own canonical form.
+    pronunciations. There is no morphology to speak of, so each form
+    is canonical. Part-of-speech also tends to be fluid and
+    context-dependent.
 
     CEDICT's English representations are descriptions, some subset of
     these descriptions may be aligned to English lexica, but this file
@@ -47,21 +48,21 @@
      
     The following new constructs are defined:
     * zh:Cedict, naming the lexicon
-    * zh:ChineseForm, subsumed by both ontlex:LexicalEntry and 
-      ontolex:Form
-    * zh:CedictEntry, a zh:ChineseForm entry in zh:Cedict.
+    * zh:ChineseForm, subsumed by ontolex:Form
+    * zh:CedictEntry, a ontolex:LexicalEntry in zh:Cedict.
     * natlex:inLexicon owl:inverseOf lime:entry, to facilitate definintion of 
       zh:CedictEntry
     * A new subclass of zh:ChineseForm is defined for every written 
-      form, restricted in its ontolex:writtenRep.
+      form, restricted in its ontolex:writtenRep, instances of which
+      should provide pronunciations within and across dialects.
+    * zh:label, a subproperty of rdfs:label providing fast access to each
+      written form.
     * zh:MandarinForm a subclass of said new subclass, with ontolex:pron
       defined with a zh:pinyin specification.
-    * zh:pinyin, a sub-property of ontolex:phoneticRep 
+    * zh:pinyin, a sub-property of ontolex:phoneticRep, specifying pinyin
     * en:gloss, an English description of each lexical sense.
-
     
     These Ontolex constructs are used directly:
-    * ontolex:writtenRep
     * ontolex:sense
     * ontolex:LexicalSense, each instance of which is given an en:gloss
       assertion (see description below) Each lexical sense is named
@@ -73,7 +74,6 @@
     People's Republic of China, are tagged as @zh. When the
     traditional form for an entry differs from the simplied form, a
     second writtenRep assertion is made, tagged as @zh-Hant.
-    
 
     Namespaces
 
@@ -85,8 +85,7 @@
     
 @prefix cedict: <http://rdf.naturallexicon.org/zh/cedict/>.
 
-    A container of instances of lexical entries and senses associated
-    with CEDICT.
+    A container for lexical entries and senses associated with CEDICT.
 
 @prefix cmn: <http://rdf.naturallexicon.org/zh/cmn/>.
 
@@ -118,23 +117,21 @@
         owl:onProperty dct:language; 
         owl:hasValue <http://www.lexvo.org/page/iso639-1/zh>;
     ];
-    
     rdfs:subClassOf [
         a owl:Restriction;
         owl:onProperty ontolex:canonicalForm;
         owl:hasSelf "true"^^xsd:boolean;
     ];
-
    dct:description """ 
 
-    Refers to forms written in Chinese. Fully specified forms should
-    be grounded in a specific Chinese dialect.
+    Refers to the class of forms written in Chinese. Fully specified
+    forms should be grounded in a specific Chinese dialect.
 
-       For each lexical entry, a subclass of ChineseWritenForm should
-        be declared, with an owl restriction on its lex:writtenRep.
-        Forms in specific dialects or varyations in pronunciation
-        within the same dialect should then be instances of this
-        class, specifying pronunciation with a sub-property of
+       For each lexical entry, a subclass dedicated to the written
+        Form should be declared, with an owl restriction on its
+        lex:writtenRep.  Forms in specific dialects or variations in
+        pronunciation within the same dialect should then be instances
+        of this class, specifying pronunciation with a sub-property of
         ontolex:phoneticRep.
         
         For example, 王 (king) can take two pronunciations (2nd or 4th
@@ -160,7 +157,7 @@
 # Cedict instance
     zh:Cedict a lime:Lexicon;
     dct:definition """
-    Refers to the Chinese lexicon rendered in from CEDICT rendered in RDF.
+    Refers to the Chinese lexicon from CEDICT rendered in RDF.
     """;
     lime:language <http://www.lexvo.org/page/iso639-1/zh>;
     dct:source <https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>;
@@ -206,7 +203,7 @@
 # mandarin form of property
 
     zh:writtenForm rdfs:subPropertyOf rdf:type;
-    rdfs:comment """
+    dct:description """
         <mandarin form> zh:writtenForm <writtenForm>
         
         Asserts that <mandarin form> is the mandarin pronunciation of 
@@ -221,7 +218,7 @@
     zh:label rdfs:subPropertyOf rdfs:label;
     rdfs:domain zh:ChineseForm;
     dct:description """
-        A label on a ChineseForm, typically naming its associated chinese
+        A label on a ChineseForm, naming its associated chinese
         character string.
         """;
     .
@@ -250,8 +247,8 @@
     specification for the same written expression.
 
     Tones may be indicated with diacritics on the vowels, or by
-    numbers 1-4, which have well-known mappings to the four mandarin
-    tones. An unmarked neutral tone is also possible.
+    numbers 1-5, which have well-known mappings to the four mandarin
+    tones. 5 indicates a neutral tone.
     
     """;
         owl:sameAs <http://www.wikidata.org/prop/P1721>;
@@ -260,7 +257,7 @@
 # SHACL for zh:pinyin
     zh:pinyinShape a sh:NodeShape;
     dct:description """ zh:pinyin should range to zh-Latn-pinyin only.  """;
-    sh:targetClass zh:ChineseForm;
+    sh:targetClass zh:MandarinForm;
     sh:property [
         sh:path zh:pinyin;
         sh:languageIn ("zh-Latn-pinyin");
