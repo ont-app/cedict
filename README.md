@@ -3,15 +3,16 @@
 This is an RDF translation of CEDICT, who's original data is available
 from
 <https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>,
-and is discussed at
-<https://www.mdbg.net/chinese/dictionary?page=cedict>.
+and is discussed at [the MDBG website](https://www.mdbg.net/chinese/dictionary?page=cedict).
 
-The supporting schema can be found in `data/cedict-schema.ttl`. It
-aligns to [the Ontolex Ontology](https://www.w3.org/2016/05/ontolex/).
+
+The supporting schema can be found in [`data/cedict-schema.ttl`](https://github.com/ont-app/cedict/blob/master/data/cedict-schema.ttl). It
+aligns to [the Ontolex ontology](https://www.w3.org/2016/05/ontolex/).
 
 Chinese has a couple of peculiarities. Its written form extends over a
 number of dialects with radically different pronunciations. There is
-no inflection to speak of, so each form is canonical.
+no inflection to speak of, so each form is canonical. Part-of-speech
+for any given form is somewhat fluid and context-dependent.
 
 CEDICT's English representations are descriptive. Some additional work
 would be necessary to align some subset of these descriptions to
@@ -20,27 +21,29 @@ English forms. This file renders these descriptions as 'glosses'.
 ## Installation
 
 The translated turtle file can be downloaded directly from
-data/cedict_1_0_ts_utf-8_mdbg.ttl.gz.
+[data/cedict_1_0_ts_utf-8_mdbg.ttl.gz](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
 
 To regenerate the file:
 
+* Clone this repo
 * [Install leiningen](https://leiningen.org/#install)
 * $ lein run
 
 By default, the input will be taken from
 `resources/cedict_1_0_ts_utf-8_mdbg.txt.gz` and output to
 `data/cedict_1_0_ts_utf-8_mdbg.ttl.gz`, but these values can be
-overridden by setting environment variables CEDICT_SOURCE_URL AND
-CEDICT_TARGET_PATH respectively.
+overridden by setting environment variables `CEDICT_SOURCE_URL` and
+`CEDICT_TARGET_PATH` respectively.
 
 
 ## Usage
 
-This is RDF data, so typically you'd load it into the RDF store of your choice and access the data through SPARQL queries.
+This is [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) data, so typically you'd load it into the RDF store of your choice and access the data through [SPARQL](https://en.wikipedia.org/wiki/SPARQL) queries.
+
 
 ## Example 
 
-(This same data is available in loadable form at data/test-sample.ttl)
+(This same data is available in loadable form at [data/test-sample.tt](https://github.com/ont-app/cedict/blob/master/data/test-sample.ttl)l)
 
 ~~~~
 # [prefix declarations]
