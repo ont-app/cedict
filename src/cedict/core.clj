@@ -273,6 +273,7 @@ Where
 
         ]
 
+    ;; return [<history> <turtle record>] ...
     [(reduce update-tally history (concat hanzi-uris
                                           [(:cmn-uri template-map)
                                            ;; tally 'zero history' version...
