@@ -9,6 +9,8 @@ and is discussed at [the MDBG website](https://www.mdbg.net/chinese/dictionary?p
 The supporting schema can be found in [`data/cedict-schema.ttl`](https://github.com/ont-app/cedict/blob/master/data/cedict-schema.ttl). It
 aligns to [the Ontolex ontology](https://www.w3.org/2016/05/ontolex/).
 
+The DCAT specification is at [data/cedict-meta.ttl](https://github.com/ont-app/cedict/blob/master/data/cedict-meta.ttl).
+
 Chinese has a couple of peculiarities. Its written form extends over a
 number of dialects with radically different pronunciations. There is
 no inflection to speak of, so each form is canonical. Part-of-speech

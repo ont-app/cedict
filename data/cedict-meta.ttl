@@ -29,13 +29,15 @@ zh:Cedict a lime:Lexicon;
     dcat:distribution <#dataDistribution>;            
     dcat:theme <https://www.wikidata.org/entity/Q2931247>;
     dcat:theme <http://dbpedia.org/resource/CEDICT>;
+    dcat:theme <https://www.wikidata.org/wiki/Q7850>;
+    dcat:theme <http://dbpedia.org/resource/Chinese_language>;        
     .
 
 <#schemaDistribution> a dcat:Distribution;
     dct:description """
         A definition of the schema that informs <#dataDistribution>.
         """;
-    dcat:downloadURL <path/to/cedict-schema.ttl>;
+    dcat:downloadURL <https://github.com/ont-app/cedict/blob/master/data/cedict-schema.ttl>;
     dct:license <https://creativecommons.org/licenses/by-sa/3.0/>;
     dcat:mediaType "text/turtle";
     .
@@ -45,7 +47,7 @@ zh:Cedict a lime:Lexicon;
         The contents of the original file, translated per
         <#schemaDistibution>.
         """;
-    dcat:downloadURL <path/to/cedict-schema.ttl>;
+    dcat:downloadURL <https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz>;
     dct:license <https://creativecommons.org/licenses/by-sa/3.0/>;
     dcat:mediaType "text/turtle";
     .
