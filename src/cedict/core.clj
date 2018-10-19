@@ -108,13 +108,13 @@ an extra variation index when necessary."
   
 
 (defn cedict-uri 
-  "Returns uri for `ci` in cmn (mandarin) namespace.
+  "Returns uri for `ci` and `pinyin` in cedict namespace, possibly adding a variant index per `history`.
 "
   [history ci pinyin]
   (shortest-valid-uri (cedict-long-uri history ci pinyin)))
 
 (defn sense-uri [history ci pinyin ordinal]
-  "Returns uri for `ci` in cmn (mandarin) namespace.
+  "Returns uri for `ci`/`pinyin`/`ordiinal` in cedict namespace, possibly adding a variant index per `history`.
 "
   (shortest-valid-uri (str (cedict-long-uri history ci pinyin)
                            "#" ordinal)))
@@ -155,7 +155,7 @@ an extra variation index when necessary."
                  (apply str suffix))
             ;; else c is not a vowel
             (if (empty? suffix)
-              ;; this a string with no vowel. An input error, but let it go...
+              ;; this a string with no vowel.
               (str prefix (str c))
               ;; else keep looking for vowel in suffix
               (recur (str prefix (str c))
@@ -207,18 +207,29 @@ an extra variation index when necessary."
 
 
 (defn- update-tally [acc key]
+  "Returns `acc`, incrementing the tally for `key`.
+Where
+<acc> := {<key> <tally>, ...}
+<key> is an (unversioned) URI which may need to be versioned to avoid 
+  duplication.
+"
   (update-in acc [key] (fn [v] (if v (inc v) 1))))
+
+;; TODO: Consider providing also some clojure-based representation
+;;  such as Grafter or EDN-LD, and also JSON-LD.
 
 (defn cedict-ttl [history traditional simple pron desc]
   "
-Returns [`history`* <record>]
+Returns [`history`* <record>], parsed from fields from the original CEDICT source, informed by  `history` to avoid duplication .
 Where
 <history> := {<uri> <tally>, ...}
+<record> is a string of turtle rendering of the contents of a CEDICT record.
+<traditional> is a string of Chinese from the 'traditional' column
+<simple> is a string of Chinese from the 'simple' column
+<pron> is a string of pinyin from the 'pronunciation' column
+<desc> is a string of English delimited by '/' for different(ish) senses.
 <uri> is a uri already minted for some output in this or previous <record>s
 <tallY> is the number of incomning lines that invoked creation of <uri>
-<record> is a string of turtle rendering of the contents of a CEDICT record.
-TODO: Consider providing also some clojure-based representation
-such as Grafter or EDN-LD, and also JSON-LD.
 "
   (let [
         hanzi-uris (if (= simple traditional)
@@ -267,9 +278,11 @@ such as Grafter or EDN-LD, and also JSON-LD.
                                            ;; tally 'zero history' version...
                                            (cedict-long-uri {} simple pinyin)])),
      (str
+      ;; skip duplicate simple hanzi...
       (if (not (contains? history (hanzi-uri simple)))
         (selmer/render hanzi-template template-map)
         "")
+      ;; skip duplicate traditional hanzi...
       (if (and (not= simple traditional)
                (not (contains? history (hanzi-uri traditional))))
         (selmer/render hanzi-template (merge template-map
@@ -278,9 +291,11 @@ such as Grafter or EDN-LD, and also JSON-LD.
                                               :language-tag "zh-Hant"
                                               }))
         "")
+      ;; skip duplicate mandarin ...
       (if (not (contains? history (:cmn-uri template-map)))
         (selmer/render mandarin-template template-map)
         "")
+      ;; Each record translates to one cedict entry, with at least one sense...
       (selmer/render cedict-entry-template template-map)
       )]))
 
@@ -311,8 +326,7 @@ Where
         (.write outstream record)))))
 
 (def default-source-url
-  "This is the last known url for the CEDICT source. Don't expect it to
-  move any time soon."
+  "A copy of the original, kept in resources directory. Can be overriden by env CEDICT_SOURCE_URL."
   (str "resources/" ;;"https://www.mdbg.net/chinese/export/cedict/"
        "cedict_1_0_ts_utf-8_mdbg.txt.gz"))
 
