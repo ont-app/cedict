@@ -1,8 +1,8 @@
 # cedict
 
-This is an RDF translation of CEDICT, who's original data is available
+This is an RDF translation of CEDICT, whose original data is available
 from
-<https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>,
+`<https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>`,
 and is discussed at [the MDBG website](https://www.mdbg.net/chinese/dictionary?page=cedict).
 
 
@@ -10,9 +10,9 @@ The supporting schema can be found in [`data/cedict-schema.ttl`](https://github.
 aligns to [the Ontolex ontology](https://www.w3.org/2016/05/ontolex/).
 
 The translated turtle file can be downloaded directly from
-[data/cedict_1_0_ts_utf-8_mdbg.ttl.gz](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
+[`data/cedict_1_0_ts_utf-8_mdbg.ttl.gz`](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
 
-The DCAT specification is at [data/cedict-meta.ttl](https://github.com/ont-app/cedict/blob/master/data/cedict-meta.ttl).
+The DCAT specification is at [`data/cedict-meta.ttl`](https://github.com/ont-app/cedict/blob/master/data/cedict-meta.ttl).
 
 Chinese has a couple of peculiarities. Its written form extends over a
 number of dialects with radically different pronunciations. There is
@@ -26,7 +26,7 @@ English forms. This file renders these descriptions as 'glosses'.
 ## Installation
 
 Normally there's nothing to build. The turtle file can be downloaded directly from
-[data/cedict_1_0_ts_utf-8_mdbg.ttl.gz](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
+[`data/cedict_1_0_ts_utf-8_mdbg.ttl.gz`](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
 
 On the off chance you want to regenerate the file:
 
@@ -48,7 +48,7 @@ This is [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) data
 
 ## Example 
 
-(This same data is available in loadable form at [data/test-sample.tt](https://github.com/ont-app/cedict/blob/master/data/test-sample.ttl)l)
+(This same data is available in loadable form at [`data/test-sample.tt`](https://github.com/ont-app/cedict/blob/master/data/test-sample.ttl)l)
 
 ~~~~
 # [prefix declarations]
@@ -109,7 +109,7 @@ cedict:王-wàng a zh:CedictEntry;
 Copyright © 2018 Eric D. Scott
 
 The CEDICT data is Licenced under
-<https://creativecommons.org/licenses/by-sa/3.0/>. Per the conditions
+`<https://creativecommons.org/licenses/by-sa/3.0/>`. Per the conditions
 of that license, this RDF representation is licensed under the same
 terms. 
 

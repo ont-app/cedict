@@ -14,7 +14,6 @@
 @prefix natlex: <http://rdf.naturallexicon.org/ont#>.
 @base <http://rdf.naturallexicon.org/zh/ont/cedict-meta.ttl>.
 
-
 zh:Cedict a lime:Lexicon;
   a dcat:Dataset;
   dct:title "CEDICT"@en;
