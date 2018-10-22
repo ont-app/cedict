@@ -142,11 +142,13 @@
       rdfs:subClassOf [a owl:restriction;
                        owl:onProperty ontolex:writtenRep;
                        owl:hasValue "王"@zh].
-  
-    cmn:王-wáng a hanzi:王;
+
+    cmn:王-wáng a zh:MandarinForm;
+      zh:writtenForm hanzi:王;
       zh:pinyin "wáng"@zh-Latn-pinyin.
 
-    cmn:王-wàng a hanzi:王;
+    cmn:王-wàng a zh:MandarinForm;
+      zh:writtenForm hanzi:王;
       zh:pinyin "wàng"@zh-Latn-pinyin.
 
         """;
