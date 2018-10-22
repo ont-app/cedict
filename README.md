@@ -2,7 +2,7 @@
 
 This is an RDF translation of CEDICT, whose original data is available
 from
-`<https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz>`,
+`https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz`,
 and is discussed at [the MDBG website](https://www.mdbg.net/chinese/dictionary?page=cedict).
 
 
@@ -109,7 +109,7 @@ cedict:王-wàng a zh:CedictEntry;
 Copyright © 2018 Eric D. Scott
 
 The CEDICT data is Licenced under
-`<https://creativecommons.org/licenses/by-sa/3.0/>`. Per the conditions
+`https://creativecommons.org/licenses/by-sa/3.0/`. Per the conditions
 of that license, this RDF representation is licensed under the same
 terms. 
 
