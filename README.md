@@ -12,7 +12,7 @@ aligns to [the Ontolex ontology](https://www.w3.org/2016/05/ontolex/).
 The translated turtle file can be downloaded directly from
 [`data/cedict_1_0_ts_utf-8_mdbg.ttl.gz`](https://github.com/ont-app/cedict/blob/master/data/cedict_1_0_ts_utf-8_mdbg.ttl.gz).
 
-The DCAT specification is at [`data/cedict-meta.ttl`](https://github.com/ont-app/cedict/blob/master/data/cedict-meta.ttl).
+The DCAT specification is at [`data/cedict-meta.ttl`](https://github.com/ont-app/cedict/blob/master/data/cedict-meta.ttl). It is also part of the [Lined Open Data Cloud](https://lod-cloud.net/#), with [this metadata](https://lod-cloud.net/dataset/http://rdf.naturallexicon.org/zh/ont/Cedict).
 
 Chinese has a couple of peculiarities. Its written form extends over a
 number of dialects with radically different pronunciations. There is
